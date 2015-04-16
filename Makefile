@@ -12,6 +12,8 @@ clean:
 	rm *.glob *.vo
 
 main:
-	ocamlc -thread unix.cma threads.cma Main.ml
+	ocamlc MyMutex.mli
+	ocamlc MyMutex.ml
+	ocamlc -thread unix.cma threads.cma MyMutex.ml Main.ml
 
 .PHONY: default extraction mymutex clean
