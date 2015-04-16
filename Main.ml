@@ -1,7 +1,5 @@
 open MyMutex
 
-module Mmmm = Mutex;;
-
 let _ =
 	let f = (fun () -> print_string "in thread\n") in
 	let t = Thread.create f () in
@@ -16,7 +14,7 @@ let f' = fun (tid : int)
 
 let _ =
 	let mutex = ref { held=false ; rn=0 ; holder=[] } in
-	let rm = Mmmm.create () in
+	let rm = Mutex.create () in
 	let olock (tid : int) (tmode : mode) = 
 		let quitloop = ref false in
 			while not !quitloop do
@@ -32,7 +30,7 @@ let _ =
 		mutex := myUnlock tid !mutex;
 		Mutex.unlock rm
 		in
-	let f = (fun ((tid', tmode') : int * mode) -> (for i=0 to 1000000 do
+	let f = (fun ((tid', tmode') : int * mode) -> (for i=0 to 10 do
 		match tmode' with
 		| Write -> olock tid' tmode'; print_string ("writer " ^ (string_of_int tid') ^ " get lock\n"); ounlock tid'
 		| Read -> olock tid' tmode'; print_string ("reader " ^ (string_of_int tid') ^ " get lock\n"); ounlock tid' done)) in
