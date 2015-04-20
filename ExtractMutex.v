@@ -1,6 +1,6 @@
-Require Import Mutex.
+Require Import MyMutex.
 
 Require Import ExtrOcamlBasic.
 Require Import ExtrOcamlNatInt.
 
-Extraction "Mutex.ml" Lock Unlock.
+Extraction "MyMutex.ml" MyLock MyUnlock.

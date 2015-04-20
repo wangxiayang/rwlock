@@ -7,7 +7,7 @@ Section Mutex.
 
 Definition Thread := nat.
 
-Record Mutex := mkMutex { held : bool ; rn : nat ; holder : list Thread }.
+Record MyMutex := mkMutex { held : bool ; rn : nat ; holder : list Thread }.
 
 Definition mm := mkMutex true 0 [0].
 
@@ -15,7 +15,7 @@ Inductive Mode :=
 | Write : Mode
 | Read : Mode.
 
-Definition Lock (mode : Mode) (thread : Thread) (mutex : Mutex) : bool * Mutex :=
+Definition MyLock (mode : Mode) (thread : Thread) (mutex : MyMutex) : bool * MyMutex :=
 	match mode with
 | Write => if eq_nat_dec (rn mutex) 0 then (true, (mkMutex true 0 [thread])) else (false, mutex)
 	| Read => if eq_nat_dec (rn mutex) 0 then
@@ -35,7 +35,7 @@ Fixpoint rmlist (a : nat) (l : list nat) : list nat :=
 	| a' :: l' => if eq_nat_dec a' a then l' else a' :: (rmlist a l')
 	end.
 
-Definition Unlock (thread : Thread) (mutex : Mutex) : Mutex :=
+Definition MyUnlock (thread : Thread) (mutex : MyMutex) : MyMutex :=
 	match held mutex with
 	| true => if 
 	inlist thread (holder mutex) then mkMutex false ((rn mutex) - 1) (rmlist thread (holder mutex)) else mutex

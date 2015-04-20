@@ -2,13 +2,16 @@ CC=coqtop -compile
 
 default: extraction 
 
-extraction: mutex
+extraction: mymutex
 	${CC} ExtractMutex
 
-mutex:
-	${CC} Mutex
+mymutex:
+	${CC} MyMutex
 
 clean:
-	rm *.glob *.vo *.ml *.mli
+	rm *.glob *.vo
 
-.PHONY: default extraction mutex clean
+main:
+	ocamlc -thread unix.cma threads.cma Main.ml
+
+.PHONY: default extraction mymutex clean
