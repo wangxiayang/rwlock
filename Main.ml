@@ -30,13 +30,21 @@ let _ =
 		mutex := myUnlock tid !mutex;
 		Mutex.unlock rm
 		in
-	let f = (fun ((tid', tmode') : int * mode) -> (for i=0 to 10 do
+	let ff = (fun ((tid', tmode') : int * mode) -> (for i=0 to 10 do
 		match tmode' with
 		| Write -> olock tid' tmode'; print_string ("writer " ^ (string_of_int tid') ^ " get lock\n"); ounlock tid'
 		| Read -> olock tid' tmode'; print_string ("reader " ^ (string_of_int tid') ^ " get lock\n"); ounlock tid' done)) in
-	let t1 = Thread.create f (1, Write) in
-	let t2 = Thread.create f (2, Read) in
-	let t3 = Thread.create f (3, Read) in
-	let t4 = Thread.create f (4, Write) in
-	let t5 = Thread.create f (5, Read) in
-	Thread.join t1; Thread.join t2; Thread.join t3; Thread.join t4; Thread.join t5; print_string "end\n"
+	let _ = Random.init(10) in
+	let x = ref 0 in
+	let block' = (fun () -> ignore(Unix.select [] [] [] (Random.float 0.2))) in
+	let block = for i = 1 to Random.int 1000 do ignore (Unix.getaddrinfo "localhost" "" []) done in
+	let myyyyf = (fun (s : int * mode) -> 
+		let (tid', _) = s in 
+		for i = 0 to 1000000 do 
+			x := !x + 1 done) in
+	let t1 = Thread.create myyyyf (1, Write) in
+	let t2 = Thread.create myyyyf (2, Read) in
+	let t3 = Thread.create myyyyf (3, Read) in
+	let t4 = Thread.create myyyyf (4, Write) in
+	let t5 = Thread.create myyyyf (5, Read) in
+	Thread.join t1; Thread.join t2; Thread.join t3; Thread.join t4; Thread.join t5; print_string ("final result is " ^ (string_of_int !x) ^ "\n")
