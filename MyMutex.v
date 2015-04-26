@@ -67,5 +67,29 @@ destruct mode.
  trivial.
 Qed.
 
-Theorem wwsafe : forall (m m' m'': MyMutex) (tid1 tid2 : Thread),
-	(true, m') = MyLock Write tid1 m -> (false, m'') = MyLock Write tid2 m'.
+Axiom pair_eq_fst : forall {A B : Type} (p q : A * B), p = q -> fst p = fst q.
+Axiom pair_eq_snd : forall {A B : Type} (p q : A * B), p = q -> snd p = snd q.
+
+Theorem wwsafe : forall (m m' : MyMutex) (tid1 tid2 : Thread),
+	(true, m') = MyLock Write tid1 m -> false = GetMutexResult Write tid2 m'.
+Proof.
+intros m m' tid1 tid2.
+simpl.
+destruct m.
+destruct held0.
+	simpl.
+	intro.
+	apply pair_eq_fst in H.
+	simpl in H.
+	inversion H.
+
+	simpl.
+	intro.
+	apply pair_eq_snd in H.
+	simpl in H.
+	rewrite H.
+	simpl.
+	unfold GetMutexResult.
+	simpl.
+	trivial.
+Qed.
